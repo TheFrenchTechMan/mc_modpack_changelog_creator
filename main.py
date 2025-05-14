@@ -7,7 +7,9 @@ import toml
 import zipfile
 
 #MARK: Arg parser
-parser = argparse.ArgumentParser(description="A program to auto generate changelogs based on a list of files", )
+parser = argparse.ArgumentParser(description="A program to auto generate changelogs based on a list of files")
+parser.add_argument("-o", "--old-path", type=str, help="Path to the old files")
+parser.add_argument("-n", "--new-path", type=str, help="Path to the new files")
 
 #MARK: Functions
 def list_files(path: str) -> list:
