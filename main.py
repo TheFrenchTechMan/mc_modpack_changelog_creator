@@ -42,6 +42,9 @@ def get_manifest(jar: str) -> str:
             return m.read().decode()
 
 def get_toml_info(file:dict, jar: str) -> dict:
+    """
+    Returns a dict containing mod id, human name and version for the specified jar mod
+    """
     file = file["mods"][0]
     infos = {
         "id": file["modId"],
@@ -49,7 +52,6 @@ def get_toml_info(file:dict, jar: str) -> dict:
         "version": file["version"]
     }
     if infos["version"].startswith("$"):
-        print("FUCK YOU")
         for line in get_manifest(jar).splitlines():
             if line.lower().startswith('implementation-version:'):
                 infos["version"] = line.split(":")[1].strip()
