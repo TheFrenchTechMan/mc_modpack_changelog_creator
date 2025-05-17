@@ -21,13 +21,13 @@ def get_toml_file(jar: str ) -> dict:
     Returns the toml info from a jar file into a dict
     """
     with zipfile.ZipFile(file=jar) as f:
-        toml_files = [file for file in f.namelist() if file.endswith('.toml')]
-        
-        if len(toml_files) > 1:
-            print(f"Found more than one TOML file for mod \"{jar}\":\n{'\n'.join(toml_files)}")
-        else:
-            with f.open(toml_files[0]) as t:
-                return toml.loads(t.read().decode())
+        toml_files = [file for file in f.namelist() if file.endswith('mods.toml')]
+        #if len(toml_files) > 1:
+            #pass
+            #print(f"Found more than one TOML file for mod \"{jar}\":\n{'\n'.join(toml_files)}")
+        #else:
+        with f.open(toml_files[0]) as t:
+            return toml.loads(t.read().decode())
 
 def get_manifest(jar: str) -> str:
     """
@@ -42,17 +42,18 @@ def get_toml_info(toml_file:dict, jar: str) -> dict:
     """
     Returns a dict containing mod id, human name and version for the specified jar mod
     """
-    toml_file = toml_file["mods"][0]
-    infos = {
-        "id": toml_file["modId"],
-        "human_name": toml_file["displayName"],
-        "version": toml_file["version"]
-    }
-    if infos["version"].startswith("$"):
-        for line in get_manifest(jar).splitlines():
-            if line.lower().startswith('implementation-version:'):
-                infos["version"] = line.split(":")[1].strip()
-    return infos
+    if toml_file:
+        toml_file = toml_file["mods"][0]
+        infos = {
+            "id": toml_file["modId"],
+            "human_name": toml_file["displayName"],
+            "version": toml_file["version"]
+        }
+        return infos
+
+def get_manifest_info(mf_file, jar):
+    for line in get_manifest(jar).splitlines():
+        
 
 def generate_changelog(old_mods: list, new_mods: list) -> str: # type: ignore
     old_mods = sorted(old_mods, key=lambda mod: mod.get("id"))
@@ -96,4 +97,4 @@ if __name__ == "__main__":
         pass
 """
 
-generate_snapshot("C:\\Users\\Camille Massardier\\curseforge\\minecraft\\Instances\\BIOME SMP 2-CURSEFORGE (1)\\mods", None)
+generate_snapshot("C:\\mods", None)
