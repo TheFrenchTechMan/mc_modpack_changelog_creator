@@ -25,7 +25,6 @@ def get_toml_file(jar: str ) -> dict:
         
         if len(toml_files) > 1:
             print(f"Found more than one TOML file for mod \"{jar}\":\n{'\n'.join(toml_files)}")
-            sys.exit()
         else:
             with f.open(toml_files[0]) as t:
                 return toml.loads(t.read().decode())
