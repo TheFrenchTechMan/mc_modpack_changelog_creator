@@ -22,12 +22,9 @@ def get_toml_file(jar: str ) -> dict:
     """
     with zipfile.ZipFile(file=jar) as f:
         toml_files = [file for file in f.namelist() if file.endswith('mods.toml')]
-        #if len(toml_files) > 1:
-            #pass
-            #print(f"Found more than one TOML file for mod \"{jar}\":\n{'\n'.join(toml_files)}")
-        #else:
-        with f.open(toml_files[0]) as t:
-            return toml.loads(t.read().decode())
+        if toml_files != []:
+            with f.open(toml_files[0]) as t:
+                return toml.loads(t.read().decode())
 
 def get_manifest(jar: str) -> str:
     """
@@ -51,9 +48,19 @@ def get_toml_info(toml_file:dict, jar: str) -> dict:
         }
         return infos
 
-def get_manifest_info(mf_file, jar):
-    for line in get_manifest(jar).splitlines():
-        
+def get_manifest_info(mf_file: str):
+    id, name, version = "", "", ""
+    for line in mf_file.split("\n"):
+        match line.split(":")[0].lower(): #this takes the key and lowers it to simplify the process
+            case "implementation-version":
+                version = line.split(":")[1].lower().strip()
+            
+    
+    return id, name, version
+
+def get_metadata(jar: str):
+    #toml_info = get_toml_info(jar)
+    manifest_info = get_manifest_info()
 
 def generate_changelog(old_mods: list, new_mods: list) -> str: # type: ignore
     old_mods = sorted(old_mods, key=lambda mod: mod.get("id"))
@@ -69,7 +76,7 @@ def generate_snapshot(mods_path: str, out_file: str):
             print(f"File \"{file}\" isn't a JAR file!")
             sys.exit()
         else:
-            file_path = mods_path + "\\" + file
+            file_path = mods_path + os.sep + file
             print(get_toml_info(get_toml_file(file_path), file_path))
 
 
@@ -97,4 +104,13 @@ if __name__ == "__main__":
         pass
 """
 
-generate_snapshot("C:\\mods", None)
+#generate_snapshot("C:\\mods", None)
+#print(os.sep)
+
+"""
+for line in get_manifest(jar).splitlines():
+    if line.lower().startswith('implementation-version:'):
+        infos["version"] = line.split(":")[1].strip()
+"""
+
+get_manifest_info(get_manifest(jar="ars_nouveau-1.21.1-5.8.2-all.jar"))
