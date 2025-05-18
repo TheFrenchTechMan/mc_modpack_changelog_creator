@@ -2,6 +2,7 @@
 import ast
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
+import json
 import os
 import sys
 import toml
@@ -66,22 +67,25 @@ def get_metadata(jar: str):
     else:
         return info
 
-def generate_changelog(old_mods: list[dict], new_mods: list[dict]) -> str: # type: ignore
+def generate_changelog(old_mods: list[dict], new_mods: list[dict]) -> str:
     old_mods = sorted(old_mods, key=lambda mod: mod.get("id"))
     new_mods = sorted(new_mods, key=lambda mod: mod.get("id"))
     #print(old_mods)
     for i in range(max(len(old_mods), len(new_mods))):
         print(f"{old_mods[i]["id"]} ({old_mods[i]["human_name"]})")
 
-def generate_snapshot(mods_path: str, out_file: str):
-    changelog = []
+def generate_snapshot(mods_path: str, out_file_path: str) -> None:
+    snapshot = []
     files = os.listdir(path=mods_path)
     for file in files:
         if not file.endswith(".jar"):
             print(f"File \"{file}\" isn't a JAR file!")
         else:
             file_path = mods_path + os.sep + file
-            changelog.append(f"")
+            snapshot.append(get_metadata(file_path))
+    
+    with open(out_file_path, "w") as f:
+        json.dump(snapshot, f)
 
 
 FILE = "ars_nouveau-1.21.1-5.8.2-all.jar"
@@ -118,5 +122,5 @@ for line in get_manifest(jar).splitlines():
 """
 
 #get_manifest_version(get_manifest(jar="ars_nouveau-1.21.1-5.8.2-all.jar"))
-for file in os.listdir("C:\\Users\\Camille Massardier\\curseforge\\minecraft\\Instances\\BIOME SMP 2-CURSEFORGE (1)\\mods"):
-    print(get_metadata("C:\\Users\\Camille Massardier\\curseforge\\minecraft\\Instances\\BIOME SMP 2-CURSEFORGE (1)\\mods\\" + file))
+
+print(generate_snapshot("C:\\mods", "chglg.json"))
