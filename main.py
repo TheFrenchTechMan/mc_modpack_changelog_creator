@@ -18,7 +18,7 @@ def list_files(path: str) -> list:
 
 def get_toml_file(jar: str ) -> dict:
     """
-    Returns the toml info from a jar file into a dict
+    Returns the raw toml info from a jar file into a dict
     """
     with zipfile.ZipFile(file=jar) as f:
         toml_files = [file for file in f.namelist() if file.endswith('mods.toml')]
@@ -35,9 +35,9 @@ def get_manifest(jar: str) -> str:
         with f.open(manifest) as m:
             return m.read().decode()
 
-def get_toml_info(toml_file:dict, jar: str) -> dict:
+def get_toml_info(toml_file:dict) -> dict:
     """
-    Returns a dict containing mod id, human name and version for the specified jar mod
+    Returns a dict containing mod id, human name and version from a toml dict
     """
     if toml_file:
         toml_file = toml_file["mods"][0]
@@ -48,21 +48,25 @@ def get_toml_info(toml_file:dict, jar: str) -> dict:
         }
         return infos
 
-def get_manifest_info(mf_file: str):
+def get_manifest_version(mf_file: str):
+    """
+    Returns the mod version from a Manifest string
+    """
     id, name, version = "", "", ""
     for line in mf_file.split("\n"):
-        match line.split(":")[0].lower(): #this takes the key and lowers it to simplify the process
-            case "implementation-version":
+        match line.split(":")[0]:
+            case "Implementation-Version":
                 version = line.split(":")[1].lower().strip()
-            
-    
     return id, name, version
 
 def get_metadata(jar: str):
-    #toml_info = get_toml_info(jar)
-    manifest_info = get_manifest_info()
+    info = get_toml_info(get_toml_file(jar))
+    if not info:
+        return jar.split("\\")[-1]
+    else:
+        return info
 
-def generate_changelog(old_mods: list, new_mods: list) -> str: # type: ignore
+def generate_changelog(old_mods: list[dict], new_mods: list[dict]) -> str: # type: ignore
     old_mods = sorted(old_mods, key=lambda mod: mod.get("id"))
     new_mods = sorted(new_mods, key=lambda mod: mod.get("id"))
     #print(old_mods)
@@ -70,14 +74,14 @@ def generate_changelog(old_mods: list, new_mods: list) -> str: # type: ignore
         print(f"{old_mods[i]["id"]} ({old_mods[i]["human_name"]})")
 
 def generate_snapshot(mods_path: str, out_file: str):
+    changelog = []
     files = os.listdir(path=mods_path)
     for file in files:
         if not file.endswith(".jar"):
             print(f"File \"{file}\" isn't a JAR file!")
-            sys.exit()
         else:
             file_path = mods_path + os.sep + file
-            print(get_toml_info(get_toml_file(file_path), file_path))
+            changelog.append(f"")
 
 
 FILE = "ars_nouveau-1.21.1-5.8.2-all.jar"
@@ -113,4 +117,6 @@ for line in get_manifest(jar).splitlines():
         infos["version"] = line.split(":")[1].strip()
 """
 
-get_manifest_info(get_manifest(jar="ars_nouveau-1.21.1-5.8.2-all.jar"))
+#get_manifest_version(get_manifest(jar="ars_nouveau-1.21.1-5.8.2-all.jar"))
+for file in os.listdir("C:\\Users\\Camille Massardier\\curseforge\\minecraft\\Instances\\BIOME SMP 2-CURSEFORGE (1)\\mods"):
+    print(get_metadata("C:\\Users\\Camille Massardier\\curseforge\\minecraft\\Instances\\BIOME SMP 2-CURSEFORGE (1)\\mods\\" + file))
