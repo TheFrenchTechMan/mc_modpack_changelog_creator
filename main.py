@@ -53,26 +53,36 @@ def get_manifest_version(mf_file: str):
     """
     Returns the mod version from a Manifest string
     """
-    id, name, version = "", "", ""
+    version = ""
     for line in mf_file.split("\n"):
         match line.split(":")[0]:
             case "Implementation-Version":
                 version = line.split(":")[1].lower().strip()
-    return id, name, version
+    return version
 
 def get_metadata(jar: str):
     info = get_toml_info(get_toml_file(jar))
     if not info:
         return jar.split("\\")[-1]
     else:
+        if info["version"] == "${file.jarVersion}":
+            info["version"] = get_manifest_version(get_manifest(jar))
+        print(info)
         return info
 
-def generate_changelog(old_mods: list[dict], new_mods: list[dict]) -> str:
-    old_mods = sorted(old_mods, key=lambda mod: mod.get("id"))
-    new_mods = sorted(new_mods, key=lambda mod: mod.get("id"))
-    #print(old_mods)
+def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
+    with open(old_mods_file_path, "r") as o:
+        old_mods = json.load(o)
+    """
+    with open(new_mods_file_path, "r") as o:
+        new_mods = json.load(o)
+    """
+    new_mods = []
     for i in range(max(len(old_mods), len(new_mods))):
-        print(f"{old_mods[i]["id"]} ({old_mods[i]["human_name"]})")
+        mod = old_mods[i]
+        if type(mod) != str:
+            infos = get_metadata
+            print(f"{mod["id"]} ({mod["human_name"]}) **{mod["version"]}**")
 
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     snapshot = []
@@ -105,4 +115,5 @@ if __name__ == "__main__":
         pass
 """
 
-print(generate_snapshot("C:\\mods", "chglg.json"))
+#generate_snapshot("C:\\mods", "chglg.json")
+generate_changelog("chglg_old.json", "chglg_new.json")
