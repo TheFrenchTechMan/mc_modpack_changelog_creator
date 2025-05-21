@@ -69,9 +69,9 @@ def get_metadata(jar: str):
         return info
 
 def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
+    kept_or_updated_mods = []
     removed_mods = []
     added_mods = []
-    kept_or_updated_mods = []
     
     with open(old_mods_file_path, "r") as o:
         old_mods = json.load(o)
@@ -98,11 +98,27 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
         added_mods.append(new_mods_ids[0])
         new_mods_ids.pop(0)
     
+    kept_mods = []
+    updated_mods = []
+    
+    for mod in kept_or_updated_mods:
+        old_version = next((i for i in old_mods if isinstance(i, dict) and i.get("id") == mod), None)
+        new_version = next((i for i in new_mods if isinstance(i, dict) and i.get("id") == mod), None)
+        if old_version == new_version:
+            kept_mods.append(mod)
+        else:
+            updated_mods.append(mod)
+    
+    
     print(kept_or_updated_mods)
     print("\n")
     print(removed_mods)
     print("\n")
     print(added_mods)
+    print("\n")
+    print(kept_mods)
+    print("\n")
+    print(updated_mods)
 
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     snapshot = []
