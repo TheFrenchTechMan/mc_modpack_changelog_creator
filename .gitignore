@@ -2,3 +2,4 @@
 gen.py
 .vscode/
 chglg*
+.venv/

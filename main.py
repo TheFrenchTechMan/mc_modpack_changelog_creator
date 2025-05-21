@@ -1,10 +1,8 @@
 #MARK: Libraries
-import ast
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 import json
 import os
-import sys
 import toml
 import zipfile
 
@@ -73,16 +71,9 @@ def get_metadata(jar: str):
 def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     with open(old_mods_file_path, "r") as o:
         old_mods = json.load(o)
-    """
-    with open(new_mods_file_path, "r") as o:
+    with open(new_mods_file_path, "r") as n:
         new_mods = json.load(o)
-    """
-    new_mods = []
-    for i in range(max(len(old_mods), len(new_mods))):
-        mod = old_mods[i]
-        if type(mod) != str:
-            infos = get_metadata
-            print(f"{mod["id"]} ({mod["human_name"]}) **{mod["version"]}**")
+    
 
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     snapshot = []
