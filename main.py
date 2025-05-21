@@ -68,6 +68,9 @@ def get_metadata(jar: str):
         print(info)
         return info
 
+def get_info_from_id(id: str, snapshot: list):
+    return next((i for i in snapshot if isinstance(i, dict) and i.get("id") == id), None)
+
 def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     kept_or_updated_mods = []
     removed_mods = []
@@ -82,9 +85,6 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     old_mods_ids = [mod["id"] if isinstance(mod, dict) else mod for mod in old_mods]
     new_mods_ids = [mod["id"] if isinstance(mod, dict) else mod for mod in new_mods]
     
-    #print(old_mods_ids)
-    #print(new_mods_ids)
-    i = 0
     while len(old_mods_ids) > 0:
         mod = old_mods_ids[0]
         if mod in new_mods_ids:
@@ -102,14 +102,29 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     updated_mods = []
     
     for mod in kept_or_updated_mods:
-        old_version = next((i for i in old_mods if isinstance(i, dict) and i.get("id") == mod), None)
-        new_version = next((i for i in new_mods if isinstance(i, dict) and i.get("id") == mod), None)
+        old_version = get_info_from_id(mod, old_mods)
+        new_version = get_info_from_id(mod, new_mods)
         if old_version == new_version:
             kept_mods.append(mod)
         else:
             updated_mods.append(mod)
     
+    changelog_message = ""
+    for mod in added_mods:
+        info = get_info_from_id(mod, new_mods)
+        changelog_message += f"- + {info["human_name"]} ({mod}) **{info["version"]}**\n"
     
+    for mod in removed_mods:
+        info = get_info_from_id(mod, old_mods)
+        changelog_message += f"- X {info["human_name"]} ({mod})\n"
+    
+    for mod in updated_mods:
+        old_info = get_info_from_id(mod, old_mods)
+        new_info = get_info_from_id(mod, new_mods)
+        changelog_message += f"- ~ {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**"
+    
+    
+    """
     print(kept_or_updated_mods)
     print("\n")
     print(removed_mods)
@@ -119,6 +134,10 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     print(kept_mods)
     print("\n")
     print(updated_mods)
+    print("\n")
+    """
+    
+    print(changelog_message)
 
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     snapshot = []
