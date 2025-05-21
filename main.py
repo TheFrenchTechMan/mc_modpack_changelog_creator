@@ -123,21 +123,7 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
         new_info = get_info_from_id(mod, new_mods)
         changelog_message += f"- ~ {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**"
     
-    
-    """
-    print(kept_or_updated_mods)
-    print("\n")
-    print(removed_mods)
-    print("\n")
-    print(added_mods)
-    print("\n")
-    print(kept_mods)
-    print("\n")
-    print(updated_mods)
-    print("\n")
-    """
-    
-    print(changelog_message)
+    return changelog_message
 
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     snapshot = []
@@ -152,8 +138,6 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)
 
-
-EXAMPLE_OLD_MODS = [{'human_name': 'Epic Extension','id': 'epic_extension','version': '2.15.34'},{'human_name': 'Amazing Plugin','id': 'amazing_plugin','version': '6.5.32-alpha'},{'human_name': 'Advanced Extension','id': 'advanced_extension','version': '2.13.34'},{'human_name': 'Reliable Mod', 'id': 'reliable_mod', 'version': '5.13.15'},{'human_name': 'Epic Addon','id': 'epic_addon','version': '2.8.24-beta+release.20240514'},{'human_name': 'Amazing Plugin','id': 'amazing_plugin','version': '3.17.43-exp'},{'human_name': 'Fast Addon','id': 'fast_addon','version': '0.9.33-rc.1+sha.abc123'},{'human_name': 'Advanced Feature','id': 'advanced_feature','version': '5.12.39'},{'human_name': 'Crazy Feature','id': 'crazy_feature','version': '5.12.45-test+build.001'},{'human_name': 'Fast Extension','id': 'fast_extension','version': '3.4.6-beta+sha.abc123'}]
 
 """
 if __name__ == "__main__":
@@ -170,5 +154,4 @@ if __name__ == "__main__":
         pass
 """
 
-#generate_snapshot("C:\\mods", "chglg.json")
-generate_changelog("chglg_old.json", "chglg_new.json")
+print(generate_changelog("chglg_old.json", "chglg_new.json"))
