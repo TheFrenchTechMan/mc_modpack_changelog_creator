@@ -112,7 +112,10 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     changelog_message = ""
     for mod in added_mods:
         info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- + {info["human_name"]} ({mod}) **{info["version"]}**\n"
+        if info != None:
+            changelog_message += f"- + {info["human_name"]} ({mod}) **{info["version"]}**\n"
+        else:
+            changelog_message += f"- + {mod}\n"
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
@@ -121,7 +124,7 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- ~ {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**"
+        changelog_message += f"- ~ {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
     
     return changelog_message
 
@@ -154,4 +157,4 @@ if __name__ == "__main__":
         pass
 """
 
-print(generate_changelog("chglg_old.json", "chglg_new.json"))
+print(generate_changelog("smp_old.json", "smp_new.json"))
