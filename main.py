@@ -1,6 +1,8 @@
 #MARK: Libraries
+import datetime
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
+from InquirerPy.validator import PathValidator
 import json
 import os
 import toml
@@ -142,19 +144,41 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
         json.dump(snapshot, f)
 
 
-"""
+
 if __name__ == "__main__":
     mode = inquirer.select(
         message="What would you like to do?",
         choices=[
-            Choice(0, "Generate a changelog"),
-            Choice(1, "Generate a version snapshot")
+            Choice(0, "Generate a version snapshot"),
+            Choice(1, "Generate a changelog")
         ]
     ).execute()
-    if mode == 0:
+    
+    if mode == 0: #SNAPSHOT
+        home_path = "/" if os.name == "posix" else "C:\\"
+        mods_path = inquirer.filepath(
+            message="Enter the path to the mods folder.",
+            default=home_path,
+            validate=PathValidator(is_dir=True, message="Not a directory.")
+        ).execute()
+        out_path = inquirer.filepath(
+            message="Enter the path to the output directory.",
+            default=home_path,
+            validate=PathValidator(is_dir=True, message="Not a directory.")
+        ).execute()
+        out_file= inquirer.text(
+            message="Enter the name for the output file, leave empty to auto-generate."
+        ).execute()
+        if out_file == "":
+            now = datetime.datetime.now()
+            timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
+            out_file = f"snapshot-{timestamp}.json"
+        elif not out_file.endswith(".json"):
+            out_file += ".json"
+        
+    
+    
+    else: #CHANGELOG
         pass
-    else:
-        pass
-"""
 
-print(generate_changelog("smp_old.json", "smp_new.json"))
+#print(generate_changelog("smp_old.json", "smp_new.json"))
