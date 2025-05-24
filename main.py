@@ -9,13 +9,6 @@ import toml
 import zipfile
 
 #MARK: Functions
-def list_files(path: str) -> list:
-    """
-    List the files in a specified folder
-    """
-    files = os.listdir(path)
-    files = [f for f in files if os.path.isfile(os.path.join(path, f))]
-    return files
 
 def get_toml_file(jar: str ) -> dict:
     """
@@ -141,8 +134,6 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)
-
-
 
 if __name__ == "__main__":
     mode = inquirer.select(
