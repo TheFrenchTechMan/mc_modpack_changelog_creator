@@ -178,8 +178,17 @@ if __name__ == "__main__":
         generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
         print(f"Successfully generated snapshot at {out_file_path}.")
     
-    
     else: #CHANGELOG
-        pass
-
-#print(generate_changelog("smp_old.json", "smp_new.json"))
+        home_path = "/" if os.name == "posix" else "C:\\"
+        old_path = inquirer.filepath(
+            message="Enter the path to the old snapshot.",
+            default=home_path,
+            validate=PathValidator(is_file=True, message="Not a directory.")
+        ).execute()
+        new_path = inquirer.filepath(
+            message="Enter the path to the new snapshot.",
+            default=home_path,
+            validate=PathValidator(is_file=True, message="Not a directory.")
+        ).execute()
+        print("\n")
+        print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path))
