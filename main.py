@@ -1,4 +1,5 @@
 #MARK: Libraries
+
 import datetime
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
@@ -134,6 +135,8 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)
+
+#MARK: Main loop
 
 if __name__ == "__main__":
     mode = inquirer.select(
