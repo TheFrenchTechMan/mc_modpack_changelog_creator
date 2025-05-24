@@ -107,18 +107,18 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     for mod in added_mods:
         info = get_info_from_id(mod, new_mods)
         if info != None:
-            changelog_message += f"- + {info["human_name"]} ({mod}) **{info["version"]}**\n"
+            changelog_message += f"- ➕ {info["human_name"]} ({mod}) **{info["version"]}**\n"
         else:
-            changelog_message += f"- + {mod}\n"
+            changelog_message += f"- ➕ {mod}\n"
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
-        changelog_message += f"- X {info["human_name"]} ({mod})\n"
+        changelog_message += f"- ❌ {info["human_name"]} ({mod})\n"
     
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- ~ {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
+        changelog_message += f"- 📈 {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
     
     return changelog_message
 
@@ -181,5 +181,5 @@ if __name__ == "__main__":
             default=home_path,
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
-        print("\n")
+        print("")
         print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path))
