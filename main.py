@@ -67,7 +67,6 @@ def get_metadata(jar: str):
     else:
         if info["version"] == "${file.jarVersion}":
             info["version"] = get_manifest_version(get_manifest(jar))
-        print(info)
         return info
 
 def get_info_from_id(id: str, snapshot: list):
@@ -175,7 +174,9 @@ if __name__ == "__main__":
             out_file = f"snapshot-{timestamp}.json"
         elif not out_file.endswith(".json"):
             out_file += ".json"
-        
+        out_file_path = out_path + os.sep + out_file
+        generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
+        print(f"Successfully generated snapshot at {out_file_path}.")
     
     
     else: #CHANGELOG
