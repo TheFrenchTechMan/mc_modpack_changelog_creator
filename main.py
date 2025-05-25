@@ -66,7 +66,7 @@ def get_metadata(jar: str):
 def get_info_from_id(id: str, snapshot: list):
     return next((i for i in snapshot if isinstance(i, dict) and i.get("id") == id), None)
 
-def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emojis: bool) -> str:
+def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emojis: bool, name_formatting: str, id_formatting: str = "*", version_formatting: str = "**") -> str:
     kept_or_updated_mods = []
     removed_mods = []
     added_mods = []
@@ -105,21 +105,21 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
             updated_mods.append(mod)
     
     changelog_message = ""
-    for mod in added_mods:
+    for mod in added_mods: #TODO: Rewrite the formatting part because this is horrendous
         info = get_info_from_id(mod, new_mods)
         if info != None:
-            changelog_message += f"- {'➕' if use_emojis else '+'} {info["human_name"]} ({mod}) **{info["version"]}**\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {name_formatting}{info["human_name"]}{name_formatting} ({id_formatting}{mod}{id_formatting}) {version_formatting}{info["version"]}{version_formatting}\n"
         else:
-            changelog_message += f"- {'➕' if use_emojis else '+'} {mod}\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {id_formatting}{mod}{id_formatting}\n"
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
-        changelog_message += f"- {'❌' if use_emojis else 'X'} {info["human_name"]} ({mod})\n"
+        changelog_message += f"- {'❌' if use_emojis else 'X'} {name_formatting}{info["human_name"]}{name_formatting} ({id_formatting}{mod}{id_formatting})\n"
     
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- {'📈' if use_emojis else '~'} {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
+        changelog_message += f"- {'📈' if use_emojis else '~'} {name_formatting}{old_info["human_name"]}{name_formatting} ({mod}) {version_formatting}{old_info["version"]}{version_formatting} -> {version_formatting}{new_info["version"]}{version_formatting}\n"
     
     return changelog_message
 
