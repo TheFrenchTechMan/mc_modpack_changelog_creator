@@ -180,7 +180,7 @@ if __name__ == "__main__":
         
         out_path = inquirer.filepath(
             message="Enter the path to the output directory.",
-            default=home_path, #TODO: Make it use the previous path as default
+            default=mods_path, #TODO: Make it use the previous path as default
             validate=PathValidator(is_dir=True, message="Not a directory.")
         ).execute()
         
