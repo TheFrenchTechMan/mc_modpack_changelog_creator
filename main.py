@@ -256,9 +256,10 @@ if __name__ == "__main__":
         
         
         print("")
-        print(generate_changelog(old_mods_file_path=old_path,
-                                    new_mods_file_path=new_path,
-                                    use_emojis=use_emojis,
-                                    name_formatting=name_formatting,
-                                    id_formatting=id_formatting,
-                                    version_formatting=version_formatting))
+        print(generate_changelog(
+            old_mods_file_path=old_path,
+            new_mods_file_path=new_path,
+            use_emojis=use_emojis,
+            name_formatting=name_formatting,
+            id_formatting=id_formatting,
+            version_formatting=version_formatting))
