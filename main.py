@@ -66,7 +66,7 @@ def get_metadata(jar: str):
 def get_info_from_id(id: str, snapshot: list):
     return next((i for i in snapshot if isinstance(i, dict) and i.get("id") == id), None)
 
-def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emojis: bool, name_formatting: str, id_formatting: str = "*", version_formatting: str = "**") -> str:
+def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emojis: bool, name_formatting: str, id_formatting: str, version_formatting: str) -> str:
     kept_or_updated_mods = []
     removed_mods = []
     added_mods = []
@@ -107,19 +107,41 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
     changelog_message = ""
     for mod in added_mods: #TODO: Rewrite the formatting part because this is horrendous
         info = get_info_from_id(mod, new_mods)
+        info = {
+            "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
+            "version": f"{version_formatting}{info["human_name"]}{version_formatting}"
+        }
+        mod = f"{id_formatting}{mod}{id_formatting}"
+        
         if info != None:
-            changelog_message += f"- {'➕' if use_emojis else '+'} {name_formatting}{info["human_name"]}{name_formatting} ({id_formatting}{mod}{id_formatting}) {version_formatting}{info["version"]}{version_formatting}\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {info["human_name"]} ({mod}) {info["version"]}\n"
         else:
-            changelog_message += f"- {'➕' if use_emojis else '+'} {id_formatting}{mod}{id_formatting}\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {mod}\n"
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
-        changelog_message += f"- {'❌' if use_emojis else 'X'} {name_formatting}{info["human_name"]}{name_formatting} ({id_formatting}{mod}{id_formatting})\n"
+        info = {
+            "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
+            "version": f"{version_formatting}{info["human_name"]}{version_formatting}"
+        }
+        mod = f"{id_formatting}{mod}{id_formatting}"
+        
+        changelog_message += f"- {'❌' if use_emojis else 'X'} {info["human_name"]} ({mod})\n"
     
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- {'📈' if use_emojis else '~'} {name_formatting}{old_info["human_name"]}{name_formatting} ({mod}) {version_formatting}{old_info["version"]}{version_formatting} -> {version_formatting}{new_info["version"]}{version_formatting}\n"
+        old_info = {
+            "human_name": f"{name_formatting}{old_info["human_name"]}{name_formatting}",
+            "version": f"{version_formatting}{old_info["human_name"]}{version_formatting}"
+        }
+        new_info = {
+            "human_name": f"{name_formatting}{new_info["human_name"]}{name_formatting}",
+            "version": f"{version_formatting}{new_info["human_name"]}{version_formatting}"
+        }
+        mod = f"{mod}"
+        
+        changelog_message += f"- {'📈' if use_emojis else '~'} {old_info["human_name"]} ({mod}) {old_info["version"]} -> {new_info["version"]}\n"
     
     return changelog_message
 
@@ -158,7 +180,7 @@ if __name__ == "__main__":
         
         out_path = inquirer.filepath(
             message="Enter the path to the output directory.",
-            default=home_path,
+            default=home_path, #TODO: Make it use the previous path as default
             validate=PathValidator(is_dir=True, message="Not a directory.")
         ).execute()
         
@@ -193,12 +215,43 @@ if __name__ == "__main__":
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
         
-        use_emojis = inquirer.select(
-        message="Do you want to include emojis in the changelog?",
-        choices=[
-            Choice(True, "Yes"),
-            Choice(False, "No")
-        ]
-    ).execute()
+        enable_formatting = inquirer.select(
+            message="Do you want to customize the formatting of the changelog?",
+            choices=[
+                Choice(True, "Yes"),
+                Choice(False, "No")
+            ]
+        ).execute()
+        
+        if enable_formatting:
+            use_emojis = inquirer.select(
+                message="Do you want to include emojis in the changelog?",
+                choices=[
+                    Choice(True, "Yes"),
+                    Choice(False, "No")
+                ]
+            ).execute()
+            
+            name_formatting= inquirer.text(
+            message="What character should be used to surround the mod name (e.g. \"Macaw's Lights and Lamps\")?",
+            default=""
+            ).execute()
+            
+            id_formatting= inquirer.text(
+            message="What character should be used to surround the mod id (e.g. \"mcwlights\")?",
+            default="`"
+            ).execute()
+            
+            version_formatting= inquirer.text(
+            message="What character should be used to surround the mod version (e.g. \"Macaw's Lights and Lamps\")?",
+            default="**"
+            ).execute()
+        
+        
+        
+        
+        
+        
+        
         print("")
         print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path, use_emojis=use_emojis))
