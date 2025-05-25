@@ -149,41 +149,50 @@ if __name__ == "__main__":
     
     if mode == 0: #SNAPSHOT
         home_path = "/" if os.name == "posix" else "C:\\"
+        
         mods_path = inquirer.filepath(
             message="Enter the path to the mods folder.",
             default=home_path,
             validate=PathValidator(is_dir=True, message="Not a directory.")
         ).execute()
+        
         out_path = inquirer.filepath(
             message="Enter the path to the output directory.",
             default=home_path,
             validate=PathValidator(is_dir=True, message="Not a directory.")
         ).execute()
+        
         out_file= inquirer.text(
             message="Enter the name for the output file, leave empty to auto-generate."
         ).execute()
+        
         if out_file == "":
             now = datetime.datetime.now()
             timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
             out_file = f"snapshot-{timestamp}.json"
         elif not out_file.endswith(".json"):
             out_file += ".json"
+        
         out_file_path = out_path + os.sep + out_file
         generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
+        
         print(f"Successfully generated snapshot at {out_file_path}.")
     
     else: #CHANGELOG
         home_path = "/" if os.name == "posix" else "C:\\"
+        
         old_path = inquirer.filepath(
             message="Enter the path to the old snapshot.",
             default=home_path,
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
+        
         new_path = inquirer.filepath(
             message="Enter the path to the new snapshot.",
             default=home_path,
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
+        
         use_emojis = inquirer.select(
         message="Do you want to include emojis in the changelog?",
         choices=[
