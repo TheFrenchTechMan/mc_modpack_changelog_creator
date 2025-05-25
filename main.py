@@ -107,10 +107,11 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
     changelog_message = ""
     for mod in added_mods: #TODO: Rewrite the formatting part because this is horrendous
         info = get_info_from_id(mod, new_mods)
-        info = {
-            "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
-            "version": f"{version_formatting}{info["human_name"]}{version_formatting}"
-        }
+        if isinstance(info, dict):
+            info = {
+                "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
+                "version": f"{version_formatting}{info["version"]}{version_formatting}"
+            }
         mod = f"{id_formatting}{mod}{id_formatting}"
         
         if info != None:
@@ -120,26 +121,32 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
-        info = {
-            "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
-            "version": f"{version_formatting}{info["human_name"]}{version_formatting}"
-        }
+        if isinstance(info, dict):
+            info = {
+                "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
+                "version": f"{version_formatting}{info["version"]}{version_formatting}"
+            }
         mod = f"{id_formatting}{mod}{id_formatting}"
         
-        changelog_message += f"- {'❌' if use_emojis else 'X'} {info["human_name"]} ({mod})\n"
+        if info != None:
+            changelog_message += f"- {'❌' if use_emojis else '+'} {info["human_name"]} ({mod})\n"
+        else:
+            changelog_message += f"- {'❌' if use_emojis else '+'} {mod}\n"
     
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        old_info = {
-            "human_name": f"{name_formatting}{old_info["human_name"]}{name_formatting}",
-            "version": f"{version_formatting}{old_info["human_name"]}{version_formatting}"
-        }
-        new_info = {
-            "human_name": f"{name_formatting}{new_info["human_name"]}{name_formatting}",
-            "version": f"{version_formatting}{new_info["human_name"]}{version_formatting}"
-        }
-        mod = f"{mod}"
+        if isinstance(info, dict):
+            old_info = {
+                "human_name": f"{name_formatting}{old_info["human_name"]}{name_formatting}",
+                "version": f"{version_formatting}{old_info["version"]}{version_formatting}"
+            }
+        if isinstance(info, dict):
+            new_info = {
+                "human_name": f"{name_formatting}{new_info["human_name"]}{name_formatting}",
+                "version": f"{version_formatting}{new_info["version"]}{version_formatting}"
+            }
+        mod = f"{id_formatting}{mod}{id_formatting}"
         
         changelog_message += f"- {'📈' if use_emojis else '~'} {old_info["human_name"]} ({mod}) {old_info["version"]} -> {new_info["version"]}\n"
     
@@ -195,7 +202,7 @@ if __name__ == "__main__":
         elif not out_file.endswith(".json"):
             out_file += ".json"
         
-        out_file_path = out_path + os.sep + out_file
+        out_file_path = out_path + os.sep if not out_path.endswith(os.sep) else "" + out_file
         generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
         
         print(f"Successfully generated snapshot at {out_file_path}.")
@@ -211,7 +218,7 @@ if __name__ == "__main__":
         
         new_path = inquirer.filepath(
             message="Enter the path to the new snapshot.",
-            default=home_path,
+            default=os.sep.join(old_path.split(os.sep)[:-1])+os.sep,
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
         
@@ -232,12 +239,12 @@ if __name__ == "__main__":
                 ]
             ).execute()
             
-            name_formatting= inquirer.text(
+            name_formatting = inquirer.text(
             message="What character should be used to surround the mod name (e.g. \"Macaw's Lights and Lamps\")?",
             default=""
             ).execute()
             
-            id_formatting= inquirer.text(
+            id_formatting = inquirer.text(
             message="What character should be used to surround the mod id (e.g. \"mcwlights\")?",
             default="`"
             ).execute()
@@ -248,10 +255,10 @@ if __name__ == "__main__":
             ).execute()
         
         
-        
-        
-        
-        
-        
         print("")
-        print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path, use_emojis=use_emojis))
+        print(generate_changelog(old_mods_file_path=old_path,
+                                    new_mods_file_path=new_path,
+                                    use_emojis=use_emojis,
+                                    name_formatting=name_formatting,
+                                    id_formatting=id_formatting,
+                                    version_formatting=version_formatting))
