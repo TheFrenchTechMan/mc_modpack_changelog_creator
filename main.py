@@ -66,7 +66,7 @@ def get_metadata(jar: str):
 def get_info_from_id(id: str, snapshot: list):
     return next((i for i in snapshot if isinstance(i, dict) and i.get("id") == id), None)
 
-def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
+def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emojis: bool) -> str:
     kept_or_updated_mods = []
     removed_mods = []
     added_mods = []
@@ -108,18 +108,18 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str) -> str:
     for mod in added_mods:
         info = get_info_from_id(mod, new_mods)
         if info != None:
-            changelog_message += f"- ➕ {info["human_name"]} ({mod}) **{info["version"]}**\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {info["human_name"]} ({mod}) **{info["version"]}**\n"
         else:
-            changelog_message += f"- ➕ {mod}\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {mod}\n"
     
     for mod in removed_mods:
         info = get_info_from_id(mod, old_mods)
-        changelog_message += f"- ❌ {info["human_name"]} ({mod})\n"
+        changelog_message += f"- {'❌' if use_emojis else 'X'} {info["human_name"]} ({mod})\n"
     
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        changelog_message += f"- 📈 {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
+        changelog_message += f"- {'📈' if use_emojis else '~'} {old_info["human_name"]} ({mod}) **{old_info["version"]} -> {new_info["version"]}**\n"
     
     return changelog_message
 
@@ -184,5 +184,12 @@ if __name__ == "__main__":
             default=home_path,
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
+        use_emojis = inquirer.select(
+        message="Do you want to include emojis in the changelog?",
+        choices=[
+            Choice(True, "Yes"),
+            Choice(False, "No")
+        ]
+    ).execute()
         print("")
-        print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path))
+        print(generate_changelog(old_mods_file_path=old_path, new_mods_file_path=new_path, use_emojis=use_emojis))
