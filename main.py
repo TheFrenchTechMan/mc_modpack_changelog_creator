@@ -104,6 +104,11 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
         else:
             updated_mods.append(mod)
     
+    use_emojis = False
+    name_formatting = ""
+    id_formatting = ""
+    version_formatting = ""
+    
     changelog_message = ""
     for mod in added_mods: #TODO: Rewrite the formatting part because this is horrendous
         info = get_info_from_id(mod, new_mods)
@@ -136,12 +141,12 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
     for mod in updated_mods:
         old_info = get_info_from_id(mod, old_mods)
         new_info = get_info_from_id(mod, new_mods)
-        if isinstance(info, dict):
+        if isinstance(old_info, dict):
             old_info = {
                 "human_name": f"{name_formatting}{old_info["human_name"]}{name_formatting}",
                 "version": f"{version_formatting}{old_info["version"]}{version_formatting}"
             }
-        if isinstance(info, dict):
+        if isinstance(new_info, dict):
             new_info = {
                 "human_name": f"{name_formatting}{new_info["human_name"]}{name_formatting}",
                 "version": f"{version_formatting}{new_info["version"]}{version_formatting}"
