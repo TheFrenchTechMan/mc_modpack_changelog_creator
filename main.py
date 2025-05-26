@@ -104,10 +104,7 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
         else:
             updated_mods.append(mod)
     
-    use_emojis = False
-    name_formatting = ""
-    id_formatting = ""
-    version_formatting = ""
+    
     
     changelog_message = ""
     for mod in added_mods: #TODO: Rewrite the formatting part because this is horrendous
@@ -258,6 +255,11 @@ if __name__ == "__main__":
             message="What character should be used to surround the mod version (e.g. \"Macaw's Lights and Lamps\")?",
             default="**"
             ).execute()
+        else:
+            use_emojis = False
+            name_formatting = ""
+            id_formatting = ""
+            version_formatting = ""
         
         
         print("")
