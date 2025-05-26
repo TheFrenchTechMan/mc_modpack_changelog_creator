@@ -57,7 +57,7 @@ def get_manifest_version(mf_file: str):
 def get_metadata(jar: str):
     info = get_toml_info(get_toml_file(jar))
     if not info:
-        return jar.split("\\")[-1]
+        return jar.split(os.sep)[-1]
     else:
         if info["version"] == "${file.jarVersion}":
             info["version"] = get_manifest_version(get_manifest(jar))
@@ -260,7 +260,6 @@ if __name__ == "__main__":
             name_formatting = ""
             id_formatting = ""
             version_formatting = ""
-        
         
         print("")
         print(generate_changelog(
