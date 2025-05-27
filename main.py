@@ -111,13 +111,13 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
         info = get_info_from_id(mod, new_mods)
         if isinstance(info, dict):
             info = {
-                "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
-                "version": f"{version_formatting}{info["version"]}{version_formatting}"
+                "human_name": f"{name_formatting}{info['human_name']}{name_formatting}",
+                "version": f"{version_formatting}{info['version']}{version_formatting}"
             }
         mod = f"{id_formatting}{mod}{id_formatting}"
         
         if info != None:
-            changelog_message += f"- {'➕' if use_emojis else '+'} {info["human_name"]} ({mod}) {info["version"]}\n"
+            changelog_message += f"- {'➕' if use_emojis else '+'} {info['human_name']} ({mod}) {info['version']}\n"
         else:
             changelog_message += f"- {'➕' if use_emojis else '+'} {mod}\n"
     
@@ -125,13 +125,13 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
         info = get_info_from_id(mod, old_mods)
         if isinstance(info, dict):
             info = {
-                "human_name": f"{name_formatting}{info["human_name"]}{name_formatting}",
-                "version": f"{version_formatting}{info["version"]}{version_formatting}"
+                "human_name": f"{name_formatting}{info['human_name']}{name_formatting}",
+                "version": f"{version_formatting}{info['version']}{version_formatting}"
             }
         mod = f"{id_formatting}{mod}{id_formatting}"
         
         if info != None:
-            changelog_message += f"- {'❌' if use_emojis else '+'} {info["human_name"]} ({mod})\n"
+            changelog_message += f"- {'❌' if use_emojis else '+'} {info['human_name']} ({mod})\n"
         else:
             changelog_message += f"- {'❌' if use_emojis else '+'} {mod}\n"
     
@@ -140,17 +140,17 @@ def generate_changelog(old_mods_file_path: str, new_mods_file_path: str, use_emo
         new_info = get_info_from_id(mod, new_mods)
         if isinstance(old_info, dict):
             old_info = {
-                "human_name": f"{name_formatting}{old_info["human_name"]}{name_formatting}",
-                "version": f"{version_formatting}{old_info["version"]}{version_formatting}"
+                "human_name": f"{name_formatting}{old_info['human_name']}{name_formatting}",
+                "version": f"{version_formatting}{old_info['version']}{version_formatting}"
             }
         if isinstance(new_info, dict):
             new_info = {
-                "human_name": f"{name_formatting}{new_info["human_name"]}{name_formatting}",
-                "version": f"{version_formatting}{new_info["version"]}{version_formatting}"
+                "human_name": f"{name_formatting}{new_info['human_name']}{name_formatting}",
+                "version": f"{version_formatting}{new_info['version']}{version_formatting}"
             }
         mod = f"{id_formatting}{mod}{id_formatting}"
         
-        changelog_message += f"- {'📈' if use_emojis else '~'} {old_info["human_name"]} ({mod}) {old_info["version"]} -> {new_info["version"]}\n"
+        changelog_message += f"- {'📈' if use_emojis else '~'} {old_info['human_name']} ({mod}) {old_info['version']} -> {new_info['version']}\n"
     
     return changelog_message
 
