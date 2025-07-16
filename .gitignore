@@ -3,3 +3,4 @@ gen.py
 .vscode/
 *.json
 .venv/
+.env

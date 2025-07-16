@@ -1,15 +1,28 @@
 #MARK: Libraries
 
 import datetime
+from dotenv import load_dotenv
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from InquirerPy.validator import PathValidator
 import json
 import os
+import requests
 import toml
 import zipfile
 
+API_KEY = os.getenv("API_KEY")
+
 #MARK: Functions
+
+def download_file(url):
+    local_filename = url.split('/')[-1]
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(local_filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192): 
+                f.write(chunk)
+    return local_filename
 
 def get_toml_file(jar: str ) -> dict:
     """
@@ -180,6 +193,13 @@ if __name__ == "__main__":
     
     if mode == 0: #SNAPSHOT
         home_path = "/" if os.name == "posix" else "C:\\"
+        pw = inquirer.select(
+            message="Do you want to use a Packwiz folder?",
+            choices=[
+                Choice(True, "Yes"),
+                Choice(False, "No")
+            ]
+        ).execute()
         
         mods_path = inquirer.filepath(
             message="Enter the path to the mods folder.",

@@ -1,2 +1,4 @@
-toml
 InquirerPy
+python-dotenv
+requests
+toml
