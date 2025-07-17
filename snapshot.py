@@ -3,6 +3,12 @@ import os
 import toml
 import zipfile
 
+from utils import *
+
+def load_toml_file(file: str) -> dict:
+    with open(file, "r") as f:
+        return toml.load(f)
+
 #MARK: get_toml_file()
 def get_toml_file(jar: str ) -> dict:
     """
@@ -50,7 +56,6 @@ def get_manifest_version(mf_file: str):
                 version = line.split(":")[1].lower().strip()
     return version
 
-
 #MARK: get_metadata()
 def get_metadata(jar: str):
     info = get_toml_info(get_toml_file(jar))
@@ -62,8 +67,8 @@ def get_metadata(jar: str):
         return info
 
 #MARK: parse_packwiz_toml()
-def parse_packwiz_toml(toml_file: dict):
-    return toml_file
+def parse_packwiz_toml(toml_file: dict): #TODO:
+    return get_cf_data(toml_file[update])
 
 #MARK: generate_snapshot()
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
@@ -78,3 +83,6 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)
+
+def generate_pw_snapshot(mods_path: str, out_file_path: str) -> None:
+    snapshot = [] #TODO:

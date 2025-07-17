@@ -22,7 +22,7 @@ if __name__ == "__main__":
         ]
     ).execute()
     
-    if mode == 0: #SNAPSHOT
+    if mode == 0: #MARK: SNAPSHOT
         home_path = "/" if os.name == "posix" else "C:\\"
         pw = inquirer.select(
             message="Do you want to use a Packwiz folder?",
@@ -31,12 +31,19 @@ if __name__ == "__main__":
                 Choice(False, "No")
             ]
         ).execute()
+        if not pw:
+            mods_path = inquirer.filepath(
+                message="Enter the path to the mods folder.",
+                default=home_path,
+                validate=PathValidator(is_dir=True, message="Not a directory.")
+            ).execute()
         
-        mods_path = inquirer.filepath(
-            message="Enter the path to the mods folder.",
-            default=home_path,
-            validate=PathValidator(is_dir=True, message="Not a directory.")
-        ).execute()
+        else:
+            mods_path = inquirer.filepath(
+                message="Enter the path to the Packwiz folder (containing files ending in .pw.toml).",
+                default=home_path,
+                validate=PathValidator(is_dir=True, message="Not a directory.")
+            ).execute()
         
         out_path = inquirer.filepath(
             message="Enter the path to the output directory.",
@@ -56,11 +63,14 @@ if __name__ == "__main__":
             out_file += ".json"
         
         out_file_path = out_path + os.sep if not out_path.endswith(os.sep) else "" + out_file
-        generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
+        if not pw:
+            generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
+        else:
+            generate_pw_snapshot(mods_path=mods_path, out_file_path=out_file_path)
         
         print(f"Successfully generated snapshot at {out_file_path}.")
     
-    else: #CHANGELOG
+    else: #MARK: CHANGELOG
         home_path = "/" if os.name == "posix" else "C:\\"
         
         old_path = inquirer.filepath(

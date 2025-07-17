@@ -4,3 +4,4 @@ gen.py
 *.json
 .venv/
 .env
+mods/
