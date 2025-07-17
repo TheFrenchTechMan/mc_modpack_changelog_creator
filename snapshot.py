@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 import toml
 import zipfile
 
@@ -10,7 +11,7 @@ def load_toml_file(file: str) -> dict:
         return toml.load(f)
 
 #MARK: get_toml_file()
-def get_toml_file(jar: str ) -> dict:
+def get_toml_file(jar: str) -> dict:
     """
     Returns the raw toml info from a jar file into a dict
     """
@@ -67,8 +68,12 @@ def get_metadata(jar: str):
         return info
 
 #MARK: parse_packwiz_toml()
-def parse_packwiz_toml(toml_file: dict): #TODO:
-    return get_cf_data(toml_file[update])
+def get_packwiz_dl(toml_file: dict):
+    if "metadata:curseforge" in str(toml_file):
+        print(str(toml_file).replace("\'", "\""))
+        project_id = toml_file["update"]["curseforge"]["project-id"]
+        file_id = toml_file["update"]["curseforge"]["file-id"]
+        return get_cf_dl_link(project_id=project_id, file_id=file_id)
 
 #MARK: generate_snapshot()
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
@@ -84,5 +89,11 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)
 
-def generate_pw_snapshot(mods_path: str, out_file_path: str) -> None:
-    snapshot = [] #TODO:
+def generate_pw_snapshot(tomls_path: str, out_file_path: str) -> None:
+    snapshot = []
+    files = os.listdir(tomls_path)
+    for file in files:
+        pass
+
+print("")
+print(get_packwiz_dl(load_toml_file(".\\mods\\terralith.pw.toml")))

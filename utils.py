@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import json
 import os
 import requests
 
@@ -16,12 +17,14 @@ def download_file(url: str):
     return local_filename
 
 #MARK: get_cf_data()
-def get_cf_data(project_id: str, file_id:str) -> dict:
+def get_cf_dl_link(project_id: str, file_id:str) -> str:
     headers = {
         'Accept': 'application/json',
-        'x-api-key': 'API_KEY'
+        'x-api-key': API_KEY
         }
     r = requests.get(f'https://api.curseforge.com/v1/mods/{project_id}/files/{file_id}', headers=headers)
-    return {
-        ""
-    }
+    return json.loads(r.content.decode())["data"]["downloadUrl"]
+
+# TESTING
+#with open("o.json", "w") as f:
+#    f.write(str(get_cf_dl_link("1090999", "6393071")))

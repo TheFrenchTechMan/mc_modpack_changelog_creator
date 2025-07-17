@@ -1,7 +1,6 @@
-*.jar
-gen.py
 .vscode/
-*.json
 .venv/
 .env
 mods/
+o.json
+__pycache__/

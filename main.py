@@ -66,7 +66,7 @@ if __name__ == "__main__":
         if not pw:
             generate_snapshot(mods_path=mods_path, out_file_path=out_file_path)
         else:
-            generate_pw_snapshot(mods_path=mods_path, out_file_path=out_file_path)
+            generate_pw_snapshot(tomls_path=mods_path, out_file_path=out_file_path)
         
         print(f"Successfully generated snapshot at {out_file_path}.")
     
