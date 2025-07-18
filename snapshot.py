@@ -7,11 +7,11 @@ import zipfile
 from utils import *
 
 def load_toml_file(file: str) -> dict:
-    with open(file, "r") as f:
+    with open(file, "r", encoding="utf-8") as f:
         return toml.load(f)
 
 #MARK: get_toml_file()
-def get_toml_file(jar: str) -> dict:
+def get_toml_file_from_jar(jar: str) -> dict:
     """
     Returns the raw toml info from a jar file into a dict
     """
@@ -59,7 +59,7 @@ def get_manifest_version(mf_file: str):
 
 #MARK: get_metadata()
 def get_metadata(jar: str):
-    info = get_toml_info(get_toml_file(jar))
+    info = get_toml_info(get_toml_file_from_jar(jar))
     if not info:
         return jar.split(os.sep)[-1]
     else:
@@ -67,13 +67,20 @@ def get_metadata(jar: str):
             info["version"] = get_manifest_version(get_manifest(jar))
         return info
 
-#MARK: parse_packwiz_toml()
+#MARK: get_packwiz_dl()
 def get_packwiz_dl(toml_file: dict):
     if "metadata:curseforge" in str(toml_file):
-        print(str(toml_file).replace("\'", "\""))
-        project_id = toml_file["update"]["curseforge"]["project-id"]
-        file_id = toml_file["update"]["curseforge"]["file-id"]
-        return get_cf_dl_link(project_id=project_id, file_id=file_id)
+        project_id = str(toml_file["update"]["curseforge"]["project-id"])
+        file_id = str(toml_file["update"]["curseforge"]["file-id"])
+        return get_cf_download_url(project_id=project_id, file_id=file_id)
+
+def get_data_from_temp_file(file_url: str) -> dict:
+    if not file_url:
+        return None
+    else:
+        f = download_file(url=file_url, path=TEMP_PATH)
+        print(f"Downloaded file {f}")
+        return get_toml_info(get_toml_file_from_jar(f))
 
 #MARK: generate_snapshot()
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
@@ -90,10 +97,20 @@ def generate_snapshot(mods_path: str, out_file_path: str) -> None:
         json.dump(snapshot, f)
 
 def generate_pw_snapshot(tomls_path: str, out_file_path: str) -> None:
+    create_temp_folder()
     snapshot = []
     files = os.listdir(tomls_path)
     for file in files:
-        pass
-
-print("")
-print(get_packwiz_dl(load_toml_file(".\\mods\\terralith.pw.toml")))
+        if not file.endswith(".toml"):
+            print(f"File \"{file}\" isn't a TOML file!")
+        else:
+            file_path = os.path.join(tomls_path, file)
+            data = get_data_from_temp_file(get_packwiz_dl(load_toml_file(file_path)))
+            if data:
+                snapshot.append(data)
+            else:
+                snapshot.append(load_toml_file(file_path)["filename"])
+    delete_temp_folder()
+    
+    with open(out_file_path, "w") as f:
+        json.dump(snapshot, f)
