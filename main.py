@@ -23,7 +23,7 @@ if __name__ == "__main__":
     ).execute()
     
     if mode == 0: #MARK: SNAPSHOT
-        home_path = "/" if os.name == "posix" else "C:\\"
+        home_path = os.getcwd()
         pw = inquirer.select(
             message="Do you want to use a Packwiz folder? (WARNING: This method will download all of the mods in a temporary folder, which takes time and requires enough empty space depending on the size of the modpack)",
             choices=[

@@ -1,6 +1,4 @@
 .vscode/
 .venv/
 .env
-mods/
-o.json
 __pycache__/
