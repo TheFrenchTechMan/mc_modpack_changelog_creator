@@ -4,11 +4,10 @@ import json
 import os
 import requests
 import shutil
-import tempfile
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
-TEMP_PATH = os.path.join(tempfile.gettempdir(), "mmcc")
+TEMP_PATH = os.path.join(os.getcwd(), "cached_files")
 
 #MARK: create_temp_folder()
 def create_temp_folder() -> None:

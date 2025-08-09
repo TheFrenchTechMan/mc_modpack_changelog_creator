@@ -53,7 +53,7 @@ def get_manifest_version(mf_file: str):
     for line in mf_file.split("\n"):
         match line.split(":")[0]:
             case "Implementation-Version":
-                version = line.split(":")[1].lower().strip()
+                version = line.split(":")[1].strip()
     return version
 
 #MARK: get_metadata()
@@ -77,9 +77,13 @@ def get_data_from_temp_file(file_url: str) -> dict:
     if not file_url:
         return None
     else:
-        f = download_file(url=file_url, path=TEMP_PATH)
-        print(f"Downloaded file {f}")
-        return get_toml_info(get_toml_file_from_jar(f))
+        file_path = f"{TEMP_PATH}{os.sep if TEMP_PATH[-1] != os.sep else None}{file_url.split('/')[-1]}"
+        if not os.path.exists(file_path):
+            f = download_file(url=file_url, path=TEMP_PATH)
+            print(f"Downloaded file {f}")
+        else:
+            print(f"File {file_url.split('/')[-1]} already exists, skipping...")
+        return get_metadata(file_path)
 
 #MARK: generate_snapshot()
 def generate_snapshot(mods_path: str, out_file_path: str) -> None:
@@ -109,7 +113,6 @@ def generate_pw_snapshot(tomls_path: str, out_file_path: str) -> None:
                 snapshot.append(data)
             else:
                 snapshot.append(load_toml_file(file_path)["filename"])
-    delete_temp_folder()
     
     with open(out_file_path, "w") as f:
         json.dump(snapshot, f)

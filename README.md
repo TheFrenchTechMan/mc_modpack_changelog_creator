@@ -14,3 +14,8 @@ I actively maintain a Minecraft modpack I made for some friends, and I often wri
 apt update
 apt install -y python3-inquirerpy python3-toml python3-requests python3-dotenv
 ```
+
+## TODO
+- allow use of command line args
+- recognize fabric mods
+- use modrinth to download mods

@@ -18,7 +18,8 @@ if __name__ == "__main__":
         message="What would you like to do?",
         choices=[
             Choice(0, "Generate a version snapshot"),
-            Choice(1, "Generate a changelog")
+            Choice(1, "Generate a changelog"),
+            Choice(2, "Clear the temp directory")
         ]
     ).execute()
     
@@ -71,12 +72,11 @@ if __name__ == "__main__":
         
         print(f"Successfully generated snapshot at {out_file_path}.")
     
-    else: #MARK: CHANGELOG
-        home_path = "/" if os.name == "posix" else "C:\\"
+    elif mode == 1: #MARK: CHANGELOG
         
         old_path = inquirer.filepath(
             message="Enter the path to the old snapshot.",
-            default=home_path,
+            default=os.getcwd(),
             validate=PathValidator(is_file=True, message="Not a directory.")
         ).execute()
         
@@ -131,3 +131,6 @@ if __name__ == "__main__":
             name_formatting=name_formatting,
             id_formatting=id_formatting,
             version_formatting=version_formatting))
+    else: #MARK: CLEAR TEMP DIR
+        delete_temp_folder()
+        print("Cleared temp directory.")
