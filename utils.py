@@ -7,7 +7,9 @@ import shutil
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
-TEMP_PATH = os.path.join(os.getcwd(), "cached_files")
+file_path = os.path.abspath(__file__)
+TEMP_PATH = os.path.join(os.path.dirname(file_path), "cached_files")
+
 
 #MARK: create_temp_folder()
 def create_temp_folder() -> None:
