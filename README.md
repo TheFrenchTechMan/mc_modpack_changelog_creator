@@ -19,3 +19,4 @@ apt install -y python3-inquirerpy python3-toml python3-requests python3-dotenv
 - allow use of command line args
 - recognize fabric mods
 - use modrinth to download mods
+- add curseforge/modrinth link in changelog output (option)
